@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { styled } from '@mui/system'
 // service
-import { login } from '../service/login.service'
+import { login, storeToken } from '../service/login.service'
 
 const App = styled('main')({
   width: '100%',
@@ -16,9 +16,12 @@ const App = styled('main')({
 })
 
 const Container = styled('div')({
-  width: '320px',
+  width: '400px',
   display: 'flex',
   flexDirection: 'column',
+  borderRadius: '8px',
+  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+  padding: '24px',
   gap: '12px',
 })
 
@@ -34,8 +37,14 @@ const Label = styled('label')({
   marginBottom: '4px',
 })
 
-const InputBox = styled('input')({
+const FormItem = styled('div')({
   width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+})
+
+const InputBox = styled('input')({
   padding: '10px',
   borderRadius: '6px',
   border: '1px solid #d9d9d9',
@@ -81,7 +90,7 @@ const Login: React.FC = () => {
     try {
       setLoading(true)
       const res = await login(username, password)
-      localStorage.setItem('token', res.token)
+      storeToken(res.token)
       navigate('/workflows')
     } catch (err: any) {
       setError(err.message || 'Login failed')
@@ -95,8 +104,16 @@ const Login: React.FC = () => {
       <Container>
         <Title>Sign in</Title>
 
-        <form onSubmit={handleSubmit}>
-          <div>
+        <form
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
+          onSubmit={handleSubmit}
+        >
+          <FormItem>
             <Label>Email</Label>
             <InputBox
               type='email'
@@ -104,9 +121,9 @@ const Login: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-          </div>
+          </FormItem>
 
-          <div style={{ marginTop: '12px' }}>
+          <FormItem>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Label>Password</Label>
               <ForgotPassword>Forgot password?</ForgotPassword>
@@ -117,17 +134,13 @@ const Login: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </div>
+          </FormItem>
 
           {error && (
             <span style={{ color: 'red', fontSize: '12px' }}>{error}</span>
           )}
 
-          <Button
-            type='submit'
-            disabled={loading}
-            style={{ marginTop: '16px' }}
-          >
+          <Button type='submit' disabled={loading} style={{ width: '100%' }}>
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>

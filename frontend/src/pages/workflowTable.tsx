@@ -9,6 +9,7 @@ import MenuBookIcon from '@mui/icons-material/MenuBook'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CategoryIcon from '@mui/icons-material/Category'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
+import LogoutIcon from '@mui/icons-material/Logout'
 
 import { showNotification } from '../utils/toast.utils'
 import { getWorkflows } from '../service/workflow.service'
@@ -18,6 +19,8 @@ import StyledTable from '../components/ReactTable/StyledTable'
 import StyledTableContainer from '../components/StyledTableContainer/StyledTableContainer'
 import StyledEmptyHeader from '../components/StyledEmptyHeader/StyledEmptyHeader'
 import StyledSelectField from '../components/StyledSelectField/StyledSelectField'
+import { clearToken } from '../service/login.service'
+import { useNavigate } from 'react-router-dom'
 
 // Layout Wrappers
 const Page = styled('div')({
@@ -98,6 +101,8 @@ interface OptionType {
 const MENU_ICON_FONT = 'small'
 
 const WorkflowTable: React.FC = () => {
+  const navigate = useNavigate()
+
   const [isLoading, setIsLoading] = useState(false)
   const [workflows, setWorkflows] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -197,8 +202,25 @@ const WorkflowTable: React.FC = () => {
           <AccountTreeIcon fontSize={MENU_ICON_FONT} />
           Workflow
         </MenuItem>
-      </SidePanel>
 
+        <Button
+          onClick={() => {
+            clearToken()
+            navigate('/login', { replace: true })
+          }}
+          variant='text'
+          color='primary'
+          style={{
+            marginTop: '160px',
+            width: '100%',
+            textTransform: 'none',
+            color: '#FFF',
+          }}
+        >
+          <LogoutIcon fontSize={MENU_ICON_FONT} />
+          Logout
+        </Button>
+      </SidePanel>
       <Container>
         <div className='flex items-center justify-between'>
           <h2
@@ -268,13 +290,14 @@ const WorkflowTable: React.FC = () => {
           justifyContent='space-between'
           sx={{ marginTop: '16px' }}
         >
-          <Typography variant='body1'>
+          <Typography variant='body1' style={{ textTransform: 'none' }}>
             Page {pageNo} of {totalPages}
           </Typography>
           <Stack direction='row' spacing={2}>
             <Button
               variant='outlined'
               size='small'
+              style={{ textTransform: 'none', fontSize: '14px' }}
               disabled={pageNo === 1}
               onClick={() => setPageNo((prev) => Math.max(prev - 1, 1))}
             >
@@ -283,6 +306,7 @@ const WorkflowTable: React.FC = () => {
             <Button
               variant='outlined'
               size='small'
+              style={{ textTransform: 'none' }}
               disabled={pageNo === totalPages || totalPages === 0}
               onClick={() => setPageNo((prev) => prev + 1)}
             >
